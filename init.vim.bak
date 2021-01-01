@@ -1,0 +1,152 @@
+set runtimepath+=~/.config/vim,~/.config/vim/after
+
+
+
+
+
+
+
+set nocompatible
+filetype off
+set viminfo+=n~/.config/vim/viminfo
+call vundle#begin()
+Plugin 'VundleVim/Vundle.vim'
+Bundle 'powerline/powerline', {'rtp': 'powerline/bindings/vim/'}
+"Plugin 'junegunn/goyo.vim'
+"Plugin 'Valloric/YouCompleteMe'
+"Plugin 'pearofducks/ansible-vim'
+
+" Vundle
+call vundle#end()
+filetype plugin indent on
+
+" Powerline
+let g:powerline_pycmd="py3"
+set laststatus=2   " Always show the statusline
+set t_Co=256
+let g:Powerline_symbols = 'fancy'
+
+" If you prefer the Omni-Completion tip window to close when a selection
+" is made, these lines close it on movement in insert mode or when leaving
+" insert mode
+autocmd CursorMovedI * if pumvisible() == 0|pclose|endif
+autocmd InsertLeave * if pumvisible() == 0|pclose|endif
+
+" Syntax highlighting
+syntax on
+
+" Wrap lines
+set wrap
+
+" F5 toggle passe mode
+set pastetoggle=<F5>
+
+" Fuck mouse usage
+set mouse=""
+"set mouse=a
+
+" Use relative line numbers
+set number
+set relativenumber
+
+" Use UTF-8 encoding
+set encoding=utf-8
+
+" Always show 11 lines above and below cursor
+set so=100
+
+" set formatprg=par\ -w78
+" map <F4> 2>{v}!par -w78<CR>
+
+" Tabs
+noremap <F1> :tabedit
+"noremap <F1> :quitall
+noremap <F2> :Texplore<CR>
+noremap <F3> :tabp<CR>
+noremap <F4> :tabn<CR>
+noremap <F11> :mksession! .session.vim<CR>
+noremap <F12> :source .session.vim<CR>
+
+" Commands
+noremap <F9> :!make<CR><CR>
+inoremap <F9> <ESC>:!make<CR><CR>i
+
+" Tabs should be spaces and 2 characters long
+set tabstop=4
+set shiftwidth=4
+set expandtab
+set autoindent
+set smartindent
+set cindent
+
+" Delete whitespace on save
+autocmd BufWritePre * %s/\s\+$//e
+
+" Highlight whitespace with red
+highlight ExtraWhitespace ctermbg=red guibg=red
+match ExtraWhitespace /\s\+$/
+
+" Line limits and highlights
+let &colorcolumn=join(range(75,999),",") " Default highlight
+
+autocmd bufreadpre *.txt setlocal textwidth=74
+autocmd bufreadpre *.html setlocal textwidth=74
+autocmd bufreadpre *.md setlocal textwidth=74
+autocmd bufreadpre *.tex setlocal textwidth=74
+
+" Python
+autocmd bufreadpre *.py setlocal textwidth=114
+autocmd bufreadpre *.py let &colorcolumn=join(range(115,999),",")
+
+" Set colors
+highlight ColorColumn ctermbg=233 guibg=#2c2d27
+hi CursorLine   cterm=NONE ctermbg=237
+set cursorline!
+
+" Save on change
+" autocmd TextChanged,TextChangedI <buffer> silent write
+
+" Navigate with guides
+inoremap <F7> <Esc>i<Right><++><Right>
+vnoremap <F7> <Esc>i<Right><++><Right>
+map <F7> <Esc>i<Right><++><Right>
+inoremap <F8> <Esc>/<++><Enter>"_c4l
+vnoremap <F8> <Esc>/<++><Enter>"_c4l
+map <F8> <Esc>/<++><Enter>"_c4l
+
+" Auto compile
+inoremap <F6> <Esc>:!gcc -g '%:t'<enter><enter>i
+vnoremap <F6> <Esc>:!gcc -g '%:t'<enter><enter>v
+map <F6> <Esc>:!gcc -g '%:t'<enter><enter>
+
+" latex
+inoremap ½ <Esc>:!pdflatex '%:t'<enter><enter>i
+
+" Goyo Extension
+function! s:goyo_enter()
+  if executable('tmux') && strlen($TMUX)
+    silent !tmux set status off
+    silent !tmux list-panes -F '\#F' | grep -q Z || tmux resize-pane -Z
+  endif
+  set noshowmode
+  set noshowcmd
+  set so=999
+endfunction
+
+function! s:goyo_leave()
+  if executable('tmux') && strlen($TMUX)
+    silent !tmux set status on
+    silent !tmux list-panes -F '\#F' | grep -q Z && tmux resize-pane -Z
+  endif
+  set showmode
+  set showcmd
+  set so=10
+endfunction
+
+autocmd! User GoyoEnter nested call <SID>goyo_enter()
+autocmd! User GoyoLeave nested call <SID>goyo_leave()
+
+inoremap <F7> <Esc>:Goyo<CR>i
+vnoremap <F7> <Esc>:Goyo<CR>v
+map <F7> :Goyo<CR>
+
